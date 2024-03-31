@@ -1,13 +1,13 @@
-import { TUser } from './user.interface';
+import { IUser } from './user.interface';
 import { User } from './user.model';
 
-const createUserIntoDB = async (payload: TUser) => {
+const createUserIntoDB = async (payload: IUser) => {
   const email = await User.findOne({ email: payload.email });
 
   if (!!email) {
     throw new Error('Email already exists');
   }
-  const  user = await User.create(payload);
+  const user = await User.create(payload);
   return user;
 };
 const getSingleUserFromDB = async (payload: string) => {

@@ -1,17 +1,25 @@
 import bcrypt from 'bcrypt';
 import { Schema, model } from 'mongoose';
-import { TUser } from './user.interface';
+import { IUser, UserModel } from './user.interface';
 import config from '../../config';
 
-const userSchema = new Schema<TUser>(
+const userSchema = new Schema<IUser, UserModel>(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     phoneNo: { type: String, required: true },
     password: { type: String, required: true },
+    isLoggedIn: { type: Boolean, default: false },
   },
   { timestamps: true },
 );
+
+
+// custom static method to find out the user exist or not using email
+userSchema.statics.isUserExist = async function (email: string) {
+  const user = await User.findOne({ email });
+  return user;
+};
 
 // Method to hash the password before saving it
 userSchema.pre('save', async function (next) {
@@ -32,4 +40,4 @@ userSchema.post('save', function (doc, next) {
   next();
 });
 
-export const User = model<TUser>('User', userSchema);
+export const User = model<IUser, UserModel>('User', userSchema);
