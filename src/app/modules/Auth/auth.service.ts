@@ -35,25 +35,8 @@ const loginUser = async (payload: TLoginUser) => {
   return accessToken
 };
 
-const logoutUser = async (userId: string) => {
-  const isExist = await User.findById({ _id: userId });
 
-  if (!isExist) {
-    throw new Error(`The user with id doesn't exists`);
-  }
-
-  const logout = await User.findByIdAndUpdate(
-    { _id: userId },
-    { isLoggedIn: false },
-  );
-  if (logout) {
-    return true;
-  } else {
-    return false;
-  }
-};
 
 export const AuthServices = {
   loginUser,
-  logoutUser,
 };
