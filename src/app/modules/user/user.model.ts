@@ -6,7 +6,7 @@ import config from '../../config';
 const userSchema = new Schema<TUser>(
   {
     name: { type: String, required: true },
-    email: { type: String, required: true, unique : true },
+    email: { type: String, required: true, unique: true },
     phoneNo: { type: String, required: true },
     password: { type: String, required: true },
   },
@@ -17,6 +17,7 @@ const userSchema = new Schema<TUser>(
 userSchema.pre('save', async function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this; // doc
+
   // hashing password and save into DB
   user.password = await bcrypt.hash(
     user.password,
@@ -25,7 +26,7 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-// set '' after saving password
+// set '' after saving password when sending the response
 userSchema.post('save', function (doc, next) {
   doc.password = '';
   next();
