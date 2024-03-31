@@ -1,26 +1,38 @@
 import bcrypt from 'bcrypt';
 import { User } from '../user/user.model';
 import { TLoginUser } from './auth.interface';
-import { ObjectId } from 'mongoose';
+import jwt from 'jsonwebtoken';
+import config from '../../config';
 
 const loginUser = async (payload: TLoginUser) => {
-  const user = await User.isUserExist(payload?.email);
+  const isEmailExist = await User.isUserExist(payload?.email);
 
-  if (!user) {
+  if (!isEmailExist) {
     throw new Error('Email does not exist');
   }
 
   // matching the provided password with hashed password
   const isPasswordMatched = await bcrypt.compare(
     payload?.password,
-    user?.password,
+    isEmailExist?.password,
   );
 
   if (!isPasswordMatched) {
     throw new Error('Invalid Password');
   }
 
-  return { userId: user?._id };
+  const jwtPayload = {
+    userId: isEmailExist?._id,
+    email: isEmailExist?.email,
+  };
+
+  // creating a token and sent to the client
+  const accessToken = jwt.sign(jwtPayload, config.jwt_access_secret as string, {
+    expiresIn: '1d',
+  });
+  
+
+  return accessToken
 };
 
 const logoutUser = async (userId: string) => {
