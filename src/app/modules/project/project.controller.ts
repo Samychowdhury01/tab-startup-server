@@ -16,6 +16,7 @@ const createProject = catchAsync(async (req, res) => {
   });
 });
 
+// get all the project controller
 const getAllProject = catchAsync(async (req, res) => {
   const result = await ProjectServices.getProjectsFromDB();
 
@@ -26,6 +27,9 @@ const getAllProject = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
+
+// get single project controller
 const getSingleProject = catchAsync(async (req, res) => {
   const id = req.params.id;
   const result = await ProjectServices.getSingleProjectFromDB(id);
@@ -38,8 +42,23 @@ const getSingleProject = catchAsync(async (req, res) => {
   });
 });
 
+// get specific user's project controller
+const getUserProjects = catchAsync(async (req, res) => {
+  const id = req.params.id;
+  console.log(id, 'from controller line 48', typeof id);
+  const result = await ProjectServices.getUserProjectsFromDB(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User's project retrieved successfully!",
+    data: result,
+  });
+});
+
 export const ProjectControllers = {
   createProject,
   getAllProject,
   getSingleProject,
+  getUserProjects
 };
