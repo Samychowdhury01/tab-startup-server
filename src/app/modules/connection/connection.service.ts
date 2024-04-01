@@ -1,5 +1,9 @@
 import { User } from '../user/user.model';
-import { TPayloadData } from './connection.interface';
+import {
+  TConnectionPayload,
+  TConnectionType,
+  TPayloadData,
+} from './connection.interface';
 import { Connection } from './connection.model';
 
 const sendRequest = async (payload: TPayloadData) => {
@@ -12,7 +16,7 @@ const sendRequest = async (payload: TPayloadData) => {
 
   //   checking if the request email exist or not
 
-  const isReceiverExits = await User.findOne({ email: data?.receiverEmail });
+  const isReceiverExits = await User.isUserExist(data?.receiverEmail);
 
   if (!isReceiverExits) {
     throw new Error(`Receiver not found`);
@@ -34,6 +38,119 @@ const sendRequest = async (payload: TPayloadData) => {
   return result;
 };
 
+// // get all the sended request of a specific user
+// const getRequests = async (
+//   payload: TConnectionPayload,
+//   type: TConnectionType,
+// ) => {
+//   const { user, email } = payload;
+
+//   //  checking if the user email and sender email is same
+//   if (user?.email !== email) {
+//     throw new Error('Invalid user email');
+//   }
+
+//   //   checking if the request email exist or not
+//   const isUserExits = await User.isUserExist(email);
+
+//   if (!isUserExits) {
+//     throw new Error(`User not found`);
+//   }
+
+//   if (!type) {
+//     throw new Error(`Invalid type`);
+//   } else if (type !== 'sent' && type !== 'received') {
+//     throw new Error(`Invalid type`);
+//   } else if (type === 'sent') {
+//     const result = await Connection.find({ senderEmail: email });
+//     return result;
+//   } else {
+//     const result = await Connection.find({ receiverEmail: email });
+//     return result;
+//   }
+// };
+
+const getRequests = async (
+  payload: TConnectionPayload,
+  type: TConnectionType,
+) => {
+  const { user, email } = payload;
+
+  //  checking if the user email and sender email is same
+  if (user?.email !== email) {
+    throw new Error('Invalid user email');
+  }
+
+  //   checking if the request email exist or not
+  const isUserExists = await User.isUserExist(email);
+
+  if (!isUserExists) {
+    throw new Error(`User not found`);
+  }
+
+  if (!type || (type !== 'sent' && type !== 'received')) {
+    throw new Error(`Invalid type`);
+  }
+
+  if (type === 'sent') {
+    return await Connection.aggregate([
+      {
+        $match: { senderEmail: email },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'receiverEmail',
+          foreignField: 'email',
+          as: 'receiverInfo',
+        },
+      },
+      {
+        $unwind: '$receiverInfo',
+      },
+      {
+        $project: {
+          senderEmail: 1,
+          receiverEmail: 1,
+          status: 1,
+          'receiverInfo.name': 1,
+          'receiverInfo.email': 1,
+          'receiverInfo.phoneNo': 1,
+        },
+      },
+    ]);
+  } else {
+    // type === 'received'
+    return await Connection.aggregate([
+      {
+        $match: { receiverEmail: email },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'senderEmail',
+          foreignField: 'email',
+          as: 'senderInfo',
+        },
+      },
+      {
+        $unwind: '$senderInfo',
+      },
+      {
+        $project: {
+          senderEmail: 1,
+          receiverEmail: 1,
+          status: 1,
+          'senderInfo.name': 1,
+          'senderInfo.email': 1,
+          'senderInfo.phoneNo': 1,
+        },
+      },
+    ]);
+  }
+};
+
 export const ConnectionServices = {
   sendRequest,
+  getRequests,
 };

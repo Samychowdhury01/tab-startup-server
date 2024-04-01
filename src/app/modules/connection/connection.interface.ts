@@ -10,3 +10,10 @@ export type TPayloadData = {
   user: JwtPayload;
   data: TConnection;
 };
+
+export type TConnectionPayload = {
+  user: JwtPayload;
+  email: string;
+};
+
+export type TConnectionType = 'sent' | 'received';
