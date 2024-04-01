@@ -9,7 +9,7 @@ const router = express.Router()
 // create new project
 router.post('/create-project',  ProjectControllers.createProject)
 // get all projects
-router.get('/',  ProjectControllers.getAllProject)
+router.get('/', auth(), ProjectControllers.getAllProject)
 // get one project by id
 router.get('/:id', ProjectControllers.getSingleProject)
 // get all projects of a specific

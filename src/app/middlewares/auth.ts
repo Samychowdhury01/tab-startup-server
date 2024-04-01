@@ -17,7 +17,6 @@ const auth = () => {
         if (err) {
           return next(err); // Return after calling next with an error
         }
-
         // If the token is valid, set req.user and call next()
         req.user = decoded as JwtPayload;
         next();

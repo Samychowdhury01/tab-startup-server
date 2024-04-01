@@ -12,7 +12,8 @@ const connectionSchema = new Schema<TConnection>({
     },
   status: {
     type : String, 
-    enum : ['pending' , 'accepted']
+    enum : ['pending' , 'accepted'],
+    default : 'pending'
     }
 });
 
