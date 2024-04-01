@@ -38,37 +38,6 @@ const sendRequest = async (payload: TPayloadData) => {
   return result;
 };
 
-// // get all the sended request of a specific user
-// const getRequests = async (
-//   payload: TConnectionPayload,
-//   type: TConnectionType,
-// ) => {
-//   const { user, email } = payload;
-
-//   //  checking if the user email and sender email is same
-//   if (user?.email !== email) {
-//     throw new Error('Invalid user email');
-//   }
-
-//   //   checking if the request email exist or not
-//   const isUserExits = await User.isUserExist(email);
-
-//   if (!isUserExits) {
-//     throw new Error(`User not found`);
-//   }
-
-//   if (!type) {
-//     throw new Error(`Invalid type`);
-//   } else if (type !== 'sent' && type !== 'received') {
-//     throw new Error(`Invalid type`);
-//   } else if (type === 'sent') {
-//     const result = await Connection.find({ senderEmail: email });
-//     return result;
-//   } else {
-//     const result = await Connection.find({ receiverEmail: email });
-//     return result;
-//   }
-// };
 
 const getRequests = async (
   payload: TConnectionPayload,
