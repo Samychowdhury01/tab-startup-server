@@ -25,7 +25,7 @@ const getSingleUser = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'user created successfully!',
+    message: 'user retrieved successfully!',
     data: result,
   });
 });

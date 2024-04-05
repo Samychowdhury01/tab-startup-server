@@ -6,7 +6,6 @@ export interface IUser  {
   email: string;
   phoneNo: string;
   password: string;
-  isLoggedIn?: boolean;
 };
 
 export interface UserModel extends Model<IUser> {

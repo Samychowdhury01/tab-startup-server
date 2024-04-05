@@ -9,7 +9,6 @@ const userSchema = new Schema<IUser, UserModel>(
     email: { type: String, required: true, unique: true },
     phoneNo: { type: String, required: true },
     password: { type: String, required: true },
-    isLoggedIn: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

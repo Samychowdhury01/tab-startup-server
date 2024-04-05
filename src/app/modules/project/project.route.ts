@@ -7,9 +7,9 @@ import auth from "../../middlewares/auth";
 const router = express.Router()
 
 // create new project
-router.post('/create-project',  ProjectControllers.createProject)
+router.post('/create-project', auth(),  ProjectControllers.createProject)
 // get all projects
-router.get('/', auth(), ProjectControllers.getAllProject)
+router.get('/', ProjectControllers.getAllProject)
 // get one project by id
 router.get('/:id', ProjectControllers.getSingleProject)
 // get all projects of a specific
